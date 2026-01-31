@@ -3,59 +3,133 @@
 
 [![Release](https://jitpack.io/v/mofneko/EmulatorDetector.svg)](https://jitpack.io/#mofneko/EmulatorDetector)
 
-This module help you to emulator detection to your Android project suported Unity.
+Android emulator detection library with comprehensive support for modern emulators. Works with Java, Kotlin, and Unity (C#).
 
-#### Basic checker
-    - BlueStacks
-    - Genymotion
-    - Android Emulator
-    - Nox App Player
-    - Koplayer
-    - .....
+## Supported Emulators
 
-# How to use
+| Emulator | Status |
+|----------|--------|
+| Android Studio Emulator (AVD) | ✅ |
+| Genymotion | ✅ |
+| BlueStacks (all versions) | ✅ |
+| NoxPlayer | ✅ |
+| LDPlayer (including v9) | ✅ |
+| MuMu Player / MuMu Player X | ✅ |
+| MEmu Play | ✅ |
+| Phoenix OS | ✅ |
+| Waydroid | ✅ |
+| Google Play Games for PC | ✅ |
+| Koplayer | ✅ |
+| Droid4X | ✅ |
+| Andy | ✅ |
+| iTools AVM | ✅ |
 
-##### Java and Kotlin
+## Detection Methods
 
-Users of your library will need add the jitpack.io repository:
+- **Build Properties** - Product, device, hardware, manufacturer, model, fingerprint analysis
+- **File System** - Emulator-specific files and directories
+- **Sensor Analysis** - Missing/fake sensors (accelerometer, gyroscope, etc.)
+- **Telephony** - Network operator, SIM state, known emulator phone numbers
+- **System Properties** - `ro.kernel.qemu`, `ro.hardware`, etc.
+- **Package Detection** - Emulator launcher apps and services
+
+## Requirements
+
+- **minSdkVersion:** 21
+- **compileSdkVersion:** 35
+- **AndroidX**
+
+## Installation
+
+### Gradle (Java/Kotlin)
+
+Add JitPack repository:
 
 ```gradle
 allprojects {
- repositories {
-    jcenter()
-    maven { url "https://jitpack.io" }
- }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
 }
 ```
-and:
+
+Add the dependency:
 
 ```gradle
 dependencies {
-    compile 'com.github.mofneko:EmulatorDetector:1.1.0'
+    implementation 'com.github.alexto9090:EmulatorDetectorAndroid:2.0.0'
 }
 ```
+
+## Usage
+
+### Basic Detection (Java/Kotlin)
+
 ```java
-EmulatorDetector.isEmulator(this);
+import com.alexto9090.emulatordetector.EmulatorDetector;
+// Simple boolean check
+boolean isEmulator = EmulatorDetector.isEmulator(context);
+
+if (isEmulator) {
+    // Running on emulator
+}
 ```
 
-##### C# (Unity)
-Create a folder with the structure Assets/Plugins/Android and put [library-release.aar](https://github.com/mofneko/EmulatorDetector/blob/master/aar/library-release.aar) in the Android folder.
-```C# (Unity)
+### Detailed Detection with Confidence Score
+
+```java
+EmulatorDetector.DetectionResult result = EmulatorDetector.getDetailedResult(context);
+
+boolean isEmulator = result.isEmulator;        // true/false
+int confidence = result.confidenceScore;       // 0-100
+List<String> reasons = result.reasons;         // Detection reasons
+
+// Example output:
+// isEmulator: true
+// confidenceScore: 75
+// reasons: ["Hardware contains: goldfish", "QEMU pipes detected", "Model indicates SDK/Emulator"]
+```
+
+### Unity (C#)
+
+1. Create folder: `Assets/Plugins/Android`
+2. Copy `library-release.aar` to the Android folder
+
+```csharp
+// Simple detection
 AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity").Call<AndroidJavaObject>("getApplicationContext");
-AndroidJavaClass cls = new AndroidJavaClass("com.nekolaboratory.EmulatorDetector");
-bool result = cls.CallStatic<bool>("isEmulator", context);
+AndroidJavaObject context = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity")
+    .Call<AndroidJavaObject>("getApplicationContext");
+AndroidJavaClass detector = new AndroidJavaClass("com.alexto9090.emulatordetector.EmulatorDetector");
+
+bool isEmulator = detector.CallStatic<bool>("isEmulator", context);
 ```
 
-# Development
+## Development
 
-```
-$ git clone git@github.com:mofneko/EmulatorDetector.git
-$ cd EmulatorDetector
-$ gradlew assembleRelease
+```bash
+git clone https://github.com/alexto9090/EmulatorDetectorAndroid.git
+cd EmulatorDetectorAndroid
+./gradlew :library:assembleRelease
 ```
 
-# License
+Output AAR: `library/build/outputs/aar/library-release.aar`
+
+## Changelog
+
+### v2.0.0 (2025)
+- **Migrated to AndroidX** and updated to compileSdk 35
+- **Added support for modern emulators:** LDPlayer, MuMu, MEmu, Phoenix OS, Waydroid, Google Play Games
+- **New detection methods:** Sensor analysis, telephony checks, system properties
+- **New API:** `getDetailedResult()` with confidence scoring
+- **Updated Gradle:** 8.7 with AGP 8.3.0
+
+### v1.1.0 (2019)
+- Initial release with basic emulator detection
+
+## License
 
 ```
 MIT License
