@@ -23,6 +23,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
@@ -30,15 +36,15 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
+publishing {
+    publications {
+        release(MavenPublication) {
+            afterEvaluate {
                 from components.release
-                groupId = 'com.github.alexto9090'
-                artifactId = 'EmulatorDetectorAndroid'
-                version = '2.0.1'
             }
+            groupId = 'com.github.alexto9090'
+            artifactId = 'EmulatorDetectorAndroid'
+            version = '2.0.2'
         }
     }
 }

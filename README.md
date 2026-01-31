@@ -59,7 +59,7 @@ Add the dependency:
 
 ```gradle
 dependencies {
-    implementation 'com.github.alexto9090:EmulatorDetectorAndroid:2.0.1'
+    implementation 'com.github.alexto9090:EmulatorDetectorAndroid:2.0.2'
 }
 ```
 
